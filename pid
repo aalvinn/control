@@ -1,0 +1,42 @@
+clear all, close all, clc
+
+m = 1;
+M = 5;
+L = 2;
+g = -9.81;
+d = 1;
+
+s = 1; % pendulo abajo es (b=-1)
+
+A = [0 1 0 0;
+    0 -d/M s*m*g/M 0;
+    0 0 0 1;
+    0 -s*d/(M*L) -s*(m+M)*g/(M*L) 0];
+B = [0; 1/M; 0; s*1/(M*L)];
+C = [0 0 1 0]; 
+D = [0];
+W=ss(A,B,C,D);
+
+Kp = 190;
+Ki = 205.8;
+Kd = 43.88;
+G = pid(Kp,Ki,Kd);
+T = feedback(W,G);
+
+tt=0:0.01:20;
+
+
+%tspan = 0:.001:10;
+%x0 = [-1; 0; pi+.2; 0];  % initial condition 
+%wr = [3; 0; pi; 0];      % reference position
+%u=@(x)-C*(x - wr);       % control law
+%[t,x] = ode45(@(t,x)pendcart(x,m,M,L,g,d,u(x)),tspan,x0);
+%
+%for k=1:100:length(t+1)
+%    drawpend(x(k,:),m,M,L);
+%end
+impulse(T,tt)
+%step(T,tt)
+
+%axis([0, 10, -0.2, 0.2]);
+title({'Response of Pendulum Position to an Impulse Disturbance';'under PID Control: Kp = 190, Ki = 205.8, Kd = 43.88'});
